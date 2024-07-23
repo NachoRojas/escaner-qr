@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escanear Código QR</title>
+    <title>Escanear Código QR y Código de Barras</title>
     <link rel="stylesheet" href="estilos.css">
     <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
 </head>
 <body>
-    <h1>Escanear Código QR</h1>
-    <button id="toggle-camera">Rotar Cámara</button>
+    <h1>Escanear Código QR y Código de Barras</h1>
+    <button id="toggle-camera">Cambiar Cámara</button>
     <video id="vista-previa" autoplay playsinline></video>
     <script src="app.js"></script>
 </body>
