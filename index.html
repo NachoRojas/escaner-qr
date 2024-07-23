@@ -3,14 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escanear Código QR</title>
-    <link rel="stylesheet" href="estilos.css">
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
+    <title>Escáner de QR y Códigos de Barra</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <script src="https://unpkg.com/jsbarcode/dist/JsBarcode.all.min.js"></script>
+    <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
 </head>
 <body>
-    <h1>Escanear Código QR</h1>
-    <input type="file" id="input-file" accept="image/*" capture="camera">
-    <canvas id="canvas" style="display:none;"></canvas>
-    <script src="app.js"></script>
+    <h1>Escáner de QR y Códigos de Barra</h1>
+    <button id="switch-camera">Cambiar Cámara</button>
+    <div id="reader"></div>
+    <div class="result">
+        <strong>Resultado:</strong> <span id="result"></span>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
