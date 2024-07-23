@@ -1,48 +1,75 @@
-let selectedDeviceId;
-const codeReader = new ZXing.BrowserMultiFormatReader();
-let currentCamera = 0;
-let videoInputDevices;
+// Espera a que la página esté completamente cargada
+window.addEventListener('load', async () => {
+    // Crea una instancia del lector de códigos QR
+    const lectorCodigo = new ZXing.BrowserQRCodeReader();
+    // Obtiene los elementos del DOM
+    const elementoVistaPrevia = document.getElementById('vista-previa');
+    const toggleCameraButton = document.getElementById('toggle-camera');
 
-async function startScanner(deviceId) {
-    const constraints = {
-        video: {
-            deviceId: { exact: deviceId }
+    let dispositivosEntradaVideo = [];
+    let indiceCamaraActual = 0;
+
+    // Función para iniciar el escaneo con la cámara seleccionada
+    const iniciarEscaneo = async (deviceId) => {
+        try {
+            await lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
+                if (resultado) {
+                    // Si el contenido del código QR es una URL, redirige a esa URL
+                    if (resultado.text.startsWith('http')) {
+                        window.location.href = resultado.text;
+                    } else {
+                        // Si el contenido no es una URL, muestra el contenido en la consola
+                        console.log('Contenido del QR:', resultado.text);
+                    }
+                }
+                if (error && !(error instanceof ZXing.NotFoundException)) {
+                    console.error(error);
+                }
+            });
+        } catch (error) {
+            console.error('Error al iniciar el escaneo:', error);
+        }
+    };
+
+    // Función para cambiar la cámara
+    const cambiarCamara = () => {
+        if (dispositivosEntradaVideo.length > 1) {
+            indiceCamaraActual = (indiceCamaraActual + 1) % dispositivosEntradaVideo.length;
+            lectorCodigo.reset(); // Reinicia el lector de códigos QR
+            iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId); // Inicia el escaneo con la nueva cámara
+        } else {
+            console.log('Solo hay una cámara disponible o ninguna cámara.');
         }
     };
 
     try {
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        const videoElement = document.getElementById('video');
-        videoElement.srcObject = stream;
+        // Obtiene los dispositivos de entrada de video disponibles
+        dispositivosEntradaVideo = await lectorCodigo.getVideoInputDevices();
+        console.log('Dispositivos de entrada de video disponibles:', dispositivosEntradaVideo);
 
-        codeReader.decodeFromVideoElement(videoElement, (result, err) => {
-            if (result) {
-                document.getElementById('result').textContent = `Código escaneado: ${result.text}`;
+        if (dispositivosEntradaVideo.length === 0) {
+            console.error('No hay dispositivos de video disponibles.');
+            return;
+        }
+
+        // Buscar la cámara trasera por defecto
+        const camaraTrasera = dispositivosEntradaVideo.find((device, index) => {
+            if (device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear')) {
+                indiceCamaraActual = index;
+                return true;
             }
-            if (err && !(err instanceof ZXing.NotFoundException)) {
-                console.error(err);
-                document.getElementById('result').textContent = `Error: ${err}`;
-            }
+            return false;
         });
-    } catch (err) {
-        console.error('Error accessing camera: ', err);
+
+        // Si no se encuentra una cámara trasera, usar la primera disponible
+        const camaraInicial = camaraTrasera ? camaraTrasera.deviceId : dispositivosEntradaVideo[0].deviceId;
+
+        // Iniciar escaneo con la cámara seleccionada por defecto
+        iniciarEscaneo(camaraInicial);
+
+        // Agregar evento de clic para el botón de cambiar cámara
+        toggleCameraButton.addEventListener('click', cambiarCamara);
+    } catch (error) {
+        console.error('Error al obtener dispositivos de video:', error);
     }
-}
-
-codeReader.listVideoInputDevices().then(devices => {
-    videoInputDevices = devices;
-    if (videoInputDevices.length > 0) {
-        selectedDeviceId = videoInputDevices[currentCamera].deviceId;
-        startScanner(selectedDeviceId);
-
-        document.getElementById('toggle-camera').addEventListener('click', () => {
-            currentCamera = (currentCamera + 1) % videoInputDevices.length;
-            selectedDeviceId = videoInputDevices[currentCamera].deviceId;
-            codeReader.reset();
-            startScanner(selectedDeviceId);
-        });
-    } else {
-        console.error('No se encontraron cámaras.');
-    }
-}).catch(err => console.error(err));
-
+});
