@@ -9,15 +9,6 @@ window.addEventListener('load', () => {
     let dispositivosEntradaVideo = [];
     let indiceCamaraActual = 0;
 
-    // Función para cambiar la cámara
-    const cambiarCamara = () => {
-        if (dispositivosEntradaVideo.length > 1) {
-            indiceCamaraActual = (indiceCamaraActual + 1) % dispositivosEntradaVideo.length;
-            lectorCodigo.reset(); // Reinicia el lector de códigos QR
-            iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId); // Inicia el escaneo con la nueva cámara
-        }
-    };
-
     // Función para iniciar el escaneo con la cámara seleccionada
     const iniciarEscaneo = (deviceId) => {
         lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
@@ -36,17 +27,44 @@ window.addEventListener('load', () => {
         });
     };
 
+    // Función para cambiar la cámara
+    const cambiarCamara = () => {
+        if (dispositivosEntradaVideo.length > 1) {
+            indiceCamaraActual = (indiceCamaraActual + 1) % dispositivosEntradaVideo.length;
+            console.log('Cambiando a cámara con índice:', indiceCamaraActual); // Debug
+            lectorCodigo.reset(); // Reinicia el lector de códigos QR
+            iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId); // Inicia el escaneo con la nueva cámara
+        } else {
+            console.log('Solo hay una cámara disponible o ninguna cámara.'); // Debug
+        }
+    };
+
     // Obtiene los dispositivos de entrada de video disponibles
     lectorCodigo.getVideoInputDevices()
         .then(devices => {
             dispositivosEntradaVideo = devices;
+            console.log('Dispositivos de entrada de video disponibles:', dispositivosEntradaVideo); // Debug
             if (dispositivosEntradaVideo.length === 0) {
                 console.error('No hay dispositivos de video disponibles.');
                 return;
             }
 
-            // Iniciar escaneo con la cámara seleccionada por defecto (la primera)
-            iniciarEscaneo(dispositivosEntradaVideo[0].deviceId);
+            // Buscar la cámara trasera por defecto
+            const camaraTrasera = dispositivosEntradaVideo.find((device, index) => {
+                if (device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear')) {
+                    indiceCamaraActual = index;
+                    return true;
+                }
+                return false;
+            });
+
+            // Si no se encuentra una cámara trasera, usar la primera disponible
+            if (!camaraTrasera) {
+                indiceCamaraActual = 0;
+            }
+
+            // Iniciar escaneo con la cámara seleccionada por defecto
+            iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId);
 
             // Agregar evento de clic para el botón de cambiar cámara
             toggleCameraButton.addEventListener('click', cambiarCamara);
