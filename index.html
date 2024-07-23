@@ -9,8 +9,9 @@
 </head>
 <body>
     <h1>Escanear Código QR</h1>
-    <button id="toggle-camera">Cambiar Cámara</button>
-    <video id="vista-previa" autoplay playsinline></video>
+    <input type="file" id="input-file" accept="image/*" capture="camera">
+    <video id="vista-previa" autoplay playsinline style="display:none;"></video>
+    <canvas id="canvas" style="display:none;"></canvas>
     <script src="app.js"></script>
 </body>
 </html>
