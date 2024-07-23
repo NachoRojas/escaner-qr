@@ -1,39 +1,90 @@
-window.addEventListener('load', () => {
-    const lectorCodigo = new ZXing.BrowserQRCodeReader();
-    const inputFile = document.getElementById('input-file');
-    const canvas = document.getElementById('canvas');
-    const contexto = canvas.getContext('2d');
+let currentCamera = 0;
+let cameras = [];
+let html5QrCode = new Html5Qrcode("reader");
+let isScanning = false;
 
-    inputFile.addEventListener('change', async (event) => {
-        const archivo = event.target.files[0];
-        if (archivo) {
-            const url = URL.createObjectURL(archivo);
-            const img = new Image();
-            img.src = url;
+function onScanSuccess(decodedText, decodedResult) {
+    document.getElementById('result').innerText = decodedText;
+    isScanning = false;
+    html5QrCode.stop();
+}
 
-            img.onload = () => {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                contexto.drawImage(img, 0, 0, img.width, img.height);
+function onScanFailure(error) {
+    console.warn(`Código QR no detectado: ${error}`);
+}
 
-                lectorCodigo.decodeFromCanvas(canvas)
-                    .then((resultado) => {
-                        if (resultado.text.startsWith('http')) {
-                            window.location.href = resultado.text;
-                        } else {
-                            console.log('Contenido del QR:', resultado.text);
-                            alert('Contenido del QR: ' + resultado.text);
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error al escanear el código QR:', error);
-                        alert('No se pudo escanear el código QR. Intenta nuevamente.');
-                    });
-            };
+async function startScanner(cameraId) {
+    try {
+        await html5QrCode.start(
+            { deviceId: { exact: cameraId } },
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            onScanSuccess,
+            onScanFailure
+        );
+        isScanning = true;
+    } catch (err) {
+        console.error(`Error al iniciar la cámara: ${err}`);
+    }
+}
 
-            img.onerror = () => {
-                alert('No se pudo cargar la imagen. Intenta nuevamente.');
-            };
+function switchCamera() {
+    if (cameras.length > 1 && isScanning) {
+        html5QrCode.stop().then(() => {
+            currentCamera = (currentCamera + 1) % cameras.length;
+            startScanner(cameras[currentCamera].deviceId);
+        }).catch(err => {
+            console.error(`Error al detener la cámara: ${err}`);
+        });
+    }
+}
+
+async function initCameras() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        cameras = devices.filter(device => device.kind === 'videoinput');
+        if (cameras.length > 0) {
+            startScanner(cameras[currentCamera].deviceId);
+        } else {
+            console.error("No se encontraron cámaras.");
         }
+    } catch (err) {
+        console.error(`Error al obtener dispositivos de medios: ${err}`);
+    }
+}
+
+function startBarcodeScanner() {
+    if (isScanning) {
+        html5QrCode.stop();
+    }
+    Quagga.init({
+        inputStream: {
+            type: "LiveStream",
+            target: document.querySelector('#reader'),
+            constraints: {
+                deviceId: cameras[currentCamera].deviceId,
+                facingMode: "environment"
+            }
+        },
+        decoder: {
+            readers: ["interleaved_2_of_5_reader"]
+        }
+    }, function(err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        Quagga.start();
     });
+
+    Quagga.onDetected(function(data) {
+        document.getElementById('result').innerText = data.codeResult.code;
+        Quagga.stop();
+        isScanning = false;
+    });
+}
+
+document.getElementById('switch-camera').addEventListener('click', switchCamera);
+document.addEventListener('DOMContentLoaded', () => {
+    initCameras();
+    document.getElementById('reader').addEventListener('click', startBarcodeScanner);
 });
