@@ -14,18 +14,13 @@ h1 {
     margin-bottom: 20px;
 }
 
-button {
+input[type="file"] {
     margin-bottom: 20px;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
 }
 
-video {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #000;
+canvas {
+    display: none;
 }
