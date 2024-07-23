@@ -3,7 +3,7 @@ window.addEventListener('load', async () => {
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const toggleCameraButton = document.getElementById('toggle-camera');
 
-    let dispositivosEntradaVideo = [];
+    let dispositivosEntradaVideo = [2];
     let indiceCamaraActual = 0;
 
     const iniciarEscaneo = async (deviceId) => {
