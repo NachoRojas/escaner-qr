@@ -1,4 +1,4 @@
-window.addEventListener('load', async () => {
+window.addEventListener('load', () => {
     const lectorCodigo = new ZXing.BrowserQRCodeReader();
     const inputFile = document.getElementById('input-file');
     const canvas = document.getElementById('canvas');
@@ -15,15 +15,20 @@ window.addEventListener('load', async () => {
                 canvas.width = img.width;
                 canvas.height = img.height;
                 contexto.drawImage(img, 0, 0, img.width, img.height);
-                lectorCodigo.decodeFromCanvas(canvas).then((resultado) => {
-                    if (resultado.text.startsWith('http')) {
-                        window.location.href = resultado.text;
-                    } else {
-                        console.log('Contenido del QR:', resultado.text);
-                    }
-                }).catch((error) => {
-                    console.error('Error al escanear el código QR:', error);
-                });
+
+                lectorCodigo.decodeFromCanvas(canvas)
+                    .then((resultado) => {
+                        if (resultado.text.startsWith('http')) {
+                            window.location.href = resultado.text;
+                        } else {
+                            console.log('Contenido del QR:', resultado.text);
+                            alert('Contenido del QR: ' + resultado.text);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error al escanear el código QR:', error);
+                        alert('No se pudo escanear el código QR. Intenta nuevamente.');
+                    });
             };
         }
     });
