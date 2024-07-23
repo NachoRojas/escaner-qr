@@ -30,6 +30,10 @@ window.addEventListener('load', () => {
                         alert('No se pudo escanear el código QR. Intenta nuevamente.');
                     });
             };
+
+            img.onerror = () => {
+                alert('No se pudo cargar la imagen. Intenta nuevamente.');
+            };
         }
     });
 });
