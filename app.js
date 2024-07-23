@@ -2,6 +2,7 @@ window.addEventListener('load', async () => {
     const lectorCodigo = new ZXing.BrowserMultiFormatReader();
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const toggleCameraButton = document.getElementById('toggle-camera');
+    const resultadoDiv = document.getElementById('resultado'); // Elemento para mostrar el resultado
 
     let dispositivosEntradaVideo = [];
     let indiceCamaraActual = 0;
@@ -28,17 +29,26 @@ window.addEventListener('load', async () => {
                 if (resultado) {
                     const tipoCodigo = resultado.getBarcodeFormat();
                     const textoCodigo = resultado.getText();
-                    
+
                     if (tipoCodigo === ZXing.BarcodeFormat.QR_CODE) {
                         if (textoCodigo.startsWith('http')) {
                             window.location.href = textoCodigo;
                         } else {
                             console.log('Contenido del QR:', textoCodigo);
+                            resultadoDiv.textContent = 'Contenido del QR: ' + textoCodigo;
                         }
                     } else if (tipoCodigo === ZXing.BarcodeFormat.ITF) {
-                        console.log('Contenido del código de barras Interleaved 2 of 5:', textoCodigo);
+                        // Mostrar el contenido del código de barras en la página
+                        if (/^\d+$/.test(textoCodigo)) {
+                            console.log('Contenido del código de barras Interleaved 2 of 5:', textoCodigo);
+                            resultadoDiv.textContent = 'Contenido del código de barras: ' + textoCodigo;
+                        } else {
+                            console.error('El contenido del código de barras no es numérico:', textoCodigo);
+                            resultadoDiv.textContent = 'Error: El contenido del código de barras no es numérico.';
+                        }
                     } else {
                         console.log(`Contenido del ${tipoCodigo}:`, textoCodigo);
+                        resultadoDiv.textContent = `Contenido del ${tipoCodigo}: ${textoCodigo}`;
                     }
                 }
                 if (error && !(error instanceof ZXing.NotFoundException)) {
