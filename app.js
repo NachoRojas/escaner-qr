@@ -4,9 +4,8 @@ window.addEventListener('load', () => {
 
     lectorCodigo.getVideoInputDevices()
         .then(dispositivosEntradaVideo => {
-            let dispositivoFrontal = dispositivosEntradaVideo.find(dispositivo => dispositivo.label.toLowerCase().includes('front')) || dispositivosEntradaVideo[0];
-
-            lectorCodigo.decodeFromVideoDevice(dispositivoFrontal.deviceId, 'vista-previa', (resultado, error) => {
+            const primerDispositivoId = dispositivosEntradaVideo[0].deviceId;
+            lectorCodigo.decodeFromVideoDevice(primerDispositivoId, 'vista-previa', (resultado, error) => {
                 if (resultado) {
                     if (resultado.text.startsWith('http')) {
                         window.location.href = resultado.text;
