@@ -4,7 +4,10 @@ window.addEventListener('load', () => {
     const lectorCodigo = new ZXing.BrowserQRCodeReader();
     // Obtiene los elementos del DOM
     const elementoVistaPrevia = document.getElementById('vista-previa');
-    const cameraSelect = document.getElementById('camera-select');
+    const toggleCameraButton = document.getElementById('toggle-camera');
+
+    let dispositivosEntradaVideo = [];
+    let indiceCamaraActual = 0;
 
     // Función para iniciar el escaneo con la cámara seleccionada
     const iniciarEscaneo = (deviceId) => {
@@ -24,27 +27,29 @@ window.addEventListener('load', () => {
         });
     };
 
+    // Función para cambiar la cámara
+    const cambiarCamara = () => {
+        if (dispositivosEntradaVideo.length > 1) {
+            indiceCamaraActual = (indiceCamaraActual + 1) % dispositivosEntradaVideo.length;
+            lectorCodigo.reset(); // Reinicia el lector de códigos QR
+            iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId); // Inicia el escaneo con la nueva cámara
+        }
+    };
+
     // Obtiene los dispositivos de entrada de video disponibles
     lectorCodigo.getVideoInputDevices()
-        .then(dispositivosEntradaVideo => {
-            // Poblar la lista desplegable con las cámaras disponibles
-            dispositivosEntradaVideo.forEach((dispositivo, indice) => {
-                const opcion = document.createElement('option');
-                opcion.value = dispositivo.deviceId;
-                opcion.text = dispositivo.label || `Camera ${indice + 1}`;
-                cameraSelect.appendChild(opcion);
-            });
-
-            // Iniciar escaneo con la cámara seleccionada por defecto (la primera)
-            if (dispositivosEntradaVideo.length > 0) {
-                iniciarEscaneo(dispositivosEntradaVideo[0].deviceId);
+        .then(devices => {
+            dispositivosEntradaVideo = devices;
+            if (dispositivosEntradaVideo.length === 0) {
+                console.error('No hay dispositivos de video disponibles.');
+                return;
             }
 
-            // Cambiar la cámara cuando el usuario selecciona una diferente
-            cameraSelect.addEventListener('change', () => {
-                lectorCodigo.reset(); // Reinicia el lector de códigos QR
-                iniciarEscaneo(cameraSelect.value); // Inicia el escaneo con la nueva cámara
-            });
+            // Iniciar escaneo con la cámara seleccionada por defecto (la primera)
+            iniciarEscaneo(dispositivosEntradaVideo[0].deviceId);
+
+            // Agregar evento de clic para el botón de cambiar cámara
+            toggleCameraButton.addEventListener('click', cambiarCamara);
         })
-        .catch(error => console.error(error));
+        .catch(error => console.error('Error al obtener dispositivos de video:', error));
 });
