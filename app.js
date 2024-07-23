@@ -34,6 +34,7 @@ window.addEventListener('load', async () => {
     // Función para cambiar la cámara
     const cambiarCamara = async () => {
         if (dispositivosEntradaVideo.length > 1) {
+            // Incrementa el índice de la cámara actual y reinicia si se supera el número de cámaras disponibles
             indiceCamaraActual = (indiceCamaraActual + 1) % dispositivosEntradaVideo.length;
             lectorCodigo.reset(); // Reinicia el lector de códigos QR
             await iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId); // Inicia el escaneo con la nueva cámara
@@ -62,14 +63,4 @@ window.addEventListener('load', async () => {
         });
 
         // Si no se encuentra una cámara trasera, usar la primera disponible
-        const camaraInicial = camaraTrasera ? dispositivosEntradaVideo[indiceCamaraActual].deviceId : dispositivosEntradaVideo[0].deviceId;
-
-        // Iniciar escaneo con la cámara seleccionada por defecto
-        await iniciarEscaneo(camaraInicial);
-
-        // Agregar evento de clic para el botón de cambiar cámara
-        toggleCameraButton.addEventListener('click', cambiarCamara);
-    } catch (error) {
-        console.error('Error al obtener dispositivos de video:', error);
-    }
-});
+        const camaraInicial = camaraTrasera ? dispositivosEn
