@@ -1,63 +1,61 @@
-let currentFacingMode = "environment"; // Start with the rear camera
+// Espera a que la página esté completamente cargada
+window.addEventListener('load', async () => {
+    const lectorCodigo = new ZXing.BrowserQRCodeReader();
+    const elementoVistaPrevia = document.getElementById('vista-previa');
+    const toggleCameraButton = document.getElementById('toggle-camera');
 
-function onScanSuccess(decodedText, decodedResult) {
-    document.getElementById('result').innerText = `Code scanned: ${decodedText}`;
-}
+    let dispositivosEntradaVideo = [];
+    let indiceCamaraActual = 0;
 
-function onScanFailure(error) {
-    console.warn(`Code scan error: ${error}`);
-}
-
-function startScanner(facingMode) {
-    if (html5QrCode.isScanning) {
-        console.log("Stopping current scan...");
-        html5QrCode.stop().then(() => {
-            console.log("Stopped successfully, starting with new facing mode...");
-            html5QrCode.start(
-                { facingMode: facingMode },
-                {
-                    fps: 10,
-                    qrbox: { width: 250, height: 250 }
-                },
-                onScanSuccess,
-                onScanFailure
-            ).then(() => {
-                console.log(`Started successfully with facing mode: ${facingMode}`);
-            }).catch(err => {
-                console.error(`Unable to start scanning, error: ${err}`);
+    const iniciarEscaneo = async (deviceId) => {
+        try {
+            await lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
+                if (resultado) {
+                    if (resultado.text.startsWith('http')) {
+                        window.location.href = resultado.text;
+                    } else {
+                        console.log('Contenido del QR:', resultado.text);
+                    }
+                }
+                if (error && !(error instanceof ZXing.NotFoundException)) {
+                    console.error(error);
+                }
             });
-        }).catch(err => {
-            console.error(`Unable to stop scanning, error: ${err}`);
+        } catch (error) {
+            console.error('Error al iniciar el escaneo:', error);
+        }
+    };
+
+    const cambiarCamara = async () => {
+        if (dispositivosEntradaVideo.length > 1) {
+            indiceCamaraActual = (indiceCamaraActual + 1) % dispositivosEntradaVideo.length;
+            lectorCodigo.reset();
+            await iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId);
+        } else {
+            console.log('Solo hay una cámara disponible o ninguna cámara.');
+        }
+    };
+
+    try {
+        dispositivosEntradaVideo = await lectorCodigo.getVideoInputDevices();
+        if (dispositivosEntradaVideo.length === 0) {
+            console.error('No hay dispositivos de video disponibles.');
+            return;
+        }
+
+        let camaraTraseraId = dispositivosEntradaVideo[0].deviceId;
+        dispositivosEntradaVideo.forEach((device, index) => {
+            if (device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear')) {
+                camaraTraseraId = device.deviceId;
+                indiceCamaraActual = index;
+            }
         });
-    } else {
-        console.log("Starting scanner for the first time...");
-        html5QrCode.start(
-            { facingMode: facingMode },
-            {
-                fps: 10,
-                qrbox: { width: 250, height: 250 }
-            },
-            onScanSuccess,
-            onScanFailure
-        ).then(() => {
-            console.log(`Started successfully with facing mode: ${facingMode}`);
-        }).catch(err => {
-            console.error(`Unable to start scanning, error: ${err}`);
-        });
+
+        await iniciarEscaneo(camaraTraseraId);
+        toggleCameraButton.addEventListener('click', cambiarCamara);
+    } catch (error) {
+        console.error('Error al obtener dispositivos de video:', error);
     }
-}
-
-window.addEventListener('load', function() {
-    html5QrCode = new Html5Qrcode("reader");
-
-    console.log("Starting initial scanner...");
-    startScanner(currentFacingMode);
-
-    document.getElementById('switch-camera').addEventListener('click', function() {
-        currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
-        console.log(`Switching to ${currentFacingMode} camera...`);
-        startScanner(currentFacingMode);
-    });
 });
 
 
