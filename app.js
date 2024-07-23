@@ -53,16 +53,19 @@ window.addEventListener('load', async () => {
         }
 
         // Buscar la cámara trasera por defecto
-        let camaraTraseraId = dispositivosEntradaVideo[0].deviceId;
-        dispositivosEntradaVideo.forEach((device, index) => {
+        const camaraTrasera = dispositivosEntradaVideo.find((device, index) => {
             if (device.label.toLowerCase().includes('back') || device.label.toLowerCase().includes('rear')) {
-                camaraTraseraId = device.deviceId;
                 indiceCamaraActual = index;
+                return true;
             }
+            return false;
         });
 
+        // Si no se encuentra una cámara trasera, usar la primera disponible
+        const camaraInicial = camaraTrasera ? camaraTrasera.deviceId : dispositivosEntradaVideo[0].deviceId;
+
         // Iniciar escaneo con la cámara seleccionada por defecto
-        iniciarEscaneo(camaraTraseraId);
+        iniciarEscaneo(camaraInicial);
 
         // Agregar evento de clic para el botón de cambiar cámara
         toggleCameraButton.addEventListener('click', cambiarCamara);
