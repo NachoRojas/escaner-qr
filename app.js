@@ -1,5 +1,5 @@
 window.addEventListener('load', async () => {
-    const lectorCodigo = new ZXing.BrowserQRCodeReader();
+    const lectorCodigo = new ZXing.BrowserMultiFormatReader();
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const toggleCameraButton = document.getElementById('toggle-camera');
 
@@ -24,12 +24,21 @@ window.addEventListener('load', async () => {
 
             elementoVistaPrevia.srcObject = currentStream;
 
-            await lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
+            lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
                 if (resultado) {
-                    if (resultado.text.startsWith('http')) {
-                        window.location.href = resultado.text;
+                    const tipoCodigo = resultado.getBarcodeFormat();
+                    const textoCodigo = resultado.getText();
+                    
+                    if (tipoCodigo === ZXing.BarcodeFormat.QR_CODE) {
+                        if (textoCodigo.startsWith('http')) {
+                            window.location.href = textoCodigo;
+                        } else {
+                            console.log('Contenido del QR:', textoCodigo);
+                        }
+                    } else if (tipoCodigo === ZXing.BarcodeFormat.ITF) {
+                        console.log('Contenido del código de barras Interleaved 2 of 5:', textoCodigo);
                     } else {
-                        console.log('Contenido del QR:', resultado.text);
+                        console.log(`Contenido del ${tipoCodigo}:`, textoCodigo);
                     }
                 }
                 if (error && !(error instanceof ZXing.NotFoundException)) {
