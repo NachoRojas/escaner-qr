@@ -1,90 +1,51 @@
-window.addEventListener('load', async () => {
-    const lectorCodigo = new ZXing.BrowserMultiFormatReader();
-    const elementoVistaPrevia = document.getElementById('vista-previa');
-    const toggleCameraButton = document.getElementById('toggle-camera');
-    const resultadoDiv = document.getElementById('resultado'); // Elemento para mostrar el resultado
+let currentFacingMode = "environment"; // Start with the rear camera
 
-    let dispositivosEntradaVideo = [];
-    let indiceCamaraActual = 0;
-    let currentStream = null;
+function onScanSuccess(decodedText, decodedResult) {
+    document.getElementById('result').innerText = `Code scanned: ${decodedText}`;
+}
 
-    const obtenerDispositivos = async () => {
-        dispositivosEntradaVideo = await navigator.mediaDevices.enumerateDevices();
-        dispositivosEntradaVideo = dispositivosEntradaVideo.filter(device => device.kind === 'videoinput');
-    };
+function onScanFailure(error) {
+    console.warn(`Code scan error: ${error}`);
+}
 
-    const iniciarEscaneo = async (deviceId) => {
-        try {
-            if (currentStream) {
-                currentStream.getTracks().forEach(track => track.stop());
-            }
-
-            currentStream = await navigator.mediaDevices.getUserMedia({
-                video: { deviceId: { exact: deviceId } }
-            });
-
-            elementoVistaPrevia.srcObject = currentStream;
-
-            lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
-                if (resultado) {
-                    const tipoCodigo = resultado.getBarcodeFormat();
-                    const textoCodigo = resultado.getText();
-
-                    if (tipoCodigo === ZXing.BarcodeFormat.QR_CODE) {
-                        if (textoCodigo.startsWith('http')) {
-                            window.location.href = textoCodigo;
-                        } else {
-                            console.log('Contenido del QR:', textoCodigo);
-                            resultadoDiv.textContent = 'Contenido del QR: ' + textoCodigo;
-                        }
-                    } else if (tipoCodigo === ZXing.BarcodeFormat.ITF) {
-                        // Mostrar el contenido del código de barras en la página
-                        if (/^\d+$/.test(textoCodigo)) {
-                            console.log('Contenido del código de barras Interleaved 2 of 5:', textoCodigo);
-                            resultadoDiv.textContent = 'Contenido del código de barras: ' + textoCodigo;
-                        } else {
-                            console.error('El contenido del código de barras no es numérico:', textoCodigo);
-                            resultadoDiv.textContent = 'Error: El contenido del código de barras no es numérico.';
-                        }
-                    } else {
-                        console.log(`Contenido del ${tipoCodigo}:`, textoCodigo);
-                        resultadoDiv.textContent = `Contenido del ${tipoCodigo}: ${textoCodigo}`;
-                    }
-                }
-                if (error && !(error instanceof ZXing.NotFoundException)) {
-                    console.error(error);
-                }
-            });
-        } catch (error) {
-            console.error('Error al iniciar el escaneo:', error);
-        }
-    };
-
-    const cambiarCamara = async () => {
-        if (dispositivosEntradaVideo.length > 1) {
-            indiceCamaraActual = (indiceCamaraActual + 1) % dispositivosEntradaVideo.length;
-            lectorCodigo.reset();
-            await iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId);
-        } else {
-            console.log('Solo hay una cámara disponible o ninguna cámara.');
-        }
-    };
-
-    try {
-        await obtenerDispositivos();
-        console.log('Dispositivos de entrada de video disponibles:', dispositivosEntradaVideo);
-
-        if (dispositivosEntradaVideo.length === 0) {
-            console.error('No hay dispositivos de video disponibles.');
-            return;
-        }
-
-        const camaraInicial = dispositivosEntradaVideo[indiceCamaraActual].deviceId;
-        await iniciarEscaneo(camaraInicial);
-
-        toggleCameraButton.addEventListener('click', cambiarCamara);
-    } catch (error) {
-        console.error('Error al obtener dispositivos de video:', error);
+function startScanner(facingMode) {
+    if (html5QrCode.isScanning) {
+        html5QrCode.stop().then(() => {
+            html5QrCode.start(
+                { facingMode: facingMode },
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                },
+                onScanSuccess,
+                onScanFailure
+            );
+        }).catch(err => {
+            console.error(`Unable to stop scanning, error: ${err}`);
+        });
+    } else {
+        html5QrCode.start(
+            { facingMode: facingMode },
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+            },
+            onScanSuccess,
+            onScanFailure
+        ).catch(err => {
+            console.error(`Unable to start scanning, error: ${err}`);
+        });
     }
+}
+
+window.addEventListener('load', function() {
+    html5QrCode = new Html5Qrcode("reader");
+
+    startScanner(currentFacingMode);
+
+    document.getElementById('switch-camera').addEventListener('click', function() {
+        currentFacingMode = currentFacingMode === "environment" ? "user" : "environment";
+        startScanner(currentFacingMode);
+    });
 });
 
