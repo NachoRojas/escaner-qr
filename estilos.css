@@ -1,9 +1,14 @@
-#reader {
-    width: 100%;
-    height: 100%;
-}
-.result {
-    margin-top: 20px;
-    font-size: 1.2em;
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
 }
 
+video {
+    width: 100%;
+    height: auto;
+}
