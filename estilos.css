@@ -2,41 +2,29 @@ body {
     font-family: Arial, sans-serif;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
-    padding: 20px; /* Agregar padding */
-    box-sizing: border-box; /* Asegurarse de que el padding se incluya en el ancho total */
 }
 
 h1 {
-    text-align: center; /* Centrar el título */
-    margin-bottom: 20px; /* Añadir espacio debajo del título */
+    color: #333;
 }
 
-video {
-    width: 100%;
-    max-width: 600px; /* Limitar el ancho máximo */
-    height: auto;
-    border: 1px solid #ccc; /* Añadir un borde para definir el video */
-    border-radius: 8px; /* Bordes redondeados */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Añadir sombra para mejor visibilidad */
+#reader {
+    margin: 20px 0;
 }
 
-/* Media queries para dispositivos móviles */
-@media (max-width: 600px) {
-    body {
-        padding: 10px; /* Reducir el padding en dispositivos móviles */
-    }
-    
-    h1 {
-        font-size: 1.5em; /* Ajustar el tamaño del texto del título en dispositivos móviles */
-    }
+#result {
+    font-size: 1.2em;
+    color: #007BFF;
+}
 
-    video {
-        width: 100%;
-        max-width: 100%; /* Asegurarse de que el video ocupe el ancho completo en dispositivos móviles */
-    }
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 20px;
 }
