@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR/Barcode Scanner</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Escanear Código QR</title>
+    <link rel="stylesheet" href="estilos.css">
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 <body>
-    <h1>QR/Barcode Scanner</h1>
-    <div id="reader" style="width: 500px;"></div>
-    <p id="result"></p>
-    <button id="switch-camera">Switch Camera</button>
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <h1>Escanear Código QR</h1>
+    <button id="toggle-camera">Cambiar Cámara</button>
+    <video id="vista-previa" autoplay playsinline></video>
     <script src="app.js"></script>
 </body>
 </html>
