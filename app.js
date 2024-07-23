@@ -1,23 +1,16 @@
-// Espera a que la página esté completamente cargada
 window.addEventListener('load', () => {
-    // Crea una instancia del lector de códigos QR
     const lectorCodigo = new ZXing.BrowserQRCodeReader();
-    // Obtiene el elemento del video donde se mostrará la vista previa de la cámara
     const elementoVistaPrevia = document.getElementById('vista-previa');
 
-    // Obtiene los dispositivos de entrada de video disponibles
     lectorCodigo.getVideoInputDevices()
         .then(dispositivosEntradaVideo => {
-            // Usa el primer dispositivo de entrada de video
-            const primerDispositivoId = dispositivosEntradaVideo[0].deviceId;
-            // Inicia el escaneo del código QR usando el dispositivo seleccionado
-            lectorCodigo.decodeFromVideoDevice(primerDispositivoId, 'vista-previa', (resultado, error) => {
+            let dispositivoFrontal = dispositivosEntradaVideo.find(dispositivo => dispositivo.label.toLowerCase().includes('front')) || dispositivosEntradaVideo[0];
+
+            lectorCodigo.decodeFromVideoDevice(dispositivoFrontal.deviceId, 'vista-previa', (resultado, error) => {
                 if (resultado) {
-                    // Si el contenido del código QR es una URL, redirige a esa URL
                     if (resultado.text.startsWith('http')) {
                         window.location.href = resultado.text;
                     } else {
-                        // Si el contenido no es una URL, muestra el contenido en la consola
                         console.log('Contenido del QR:', resultado.text);
                     }
                 }
