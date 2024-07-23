@@ -2,27 +2,54 @@
 window.addEventListener('load', () => {
     // Crea una instancia del lector de códigos QR
     const lectorCodigo = new ZXing.BrowserQRCodeReader();
-    // Obtiene el elemento del video donde se mostrará la vista previa de la cámara
+    // Obtiene los elementos del DOM
     const elementoVistaPrevia = document.getElementById('vista-previa');
+    const toggleCameraButton = document.getElementById('toggle-camera');
+
+    let dispositivosEntradaVideo = [];
+    let indiceCamaraActual = 0;
+
+    // Función para cambiar la cámara
+    const cambiarCamara = () => {
+        if (dispositivosEntradaVideo.length > 1) {
+            indiceCamaraActual = (indiceCamaraActual + 1) % dispositivosEntradaVideo.length;
+            lectorCodigo.reset(); // Reinicia el lector de códigos QR
+            iniciarEscaneo(dispositivosEntradaVideo[indiceCamaraActual].deviceId); // Inicia el escaneo con la nueva cámara
+        }
+    };
+
+    // Función para iniciar el escaneo con la cámara seleccionada
+    const iniciarEscaneo = (deviceId) => {
+        lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
+            if (resultado) {
+                // Si el contenido del código QR es una URL, redirige a esa URL
+                if (resultado.text.startsWith('http')) {
+                    window.location.href = resultado.text;
+                } else {
+                    // Si el contenido no es una URL, muestra el contenido en la consola
+                    console.log('Contenido del QR:', resultado.text);
+                }
+            }
+            if (error && !(error instanceof ZXing.NotFoundException)) {
+                console.error(error);
+            }
+        });
+    };
 
     // Obtiene los dispositivos de entrada de video disponibles
     lectorCodigo.getVideoInputDevices()
-        .then(dispositivosEntradaVideo => {
-            const primerDispositivoId = dispositivosEntradaVideo[0].deviceId;
-            lectorCodigo.decodeFromVideoDevice(primerDispositivoId, 'vista-previa', (resultado, error) => {
-                if (resultado) {
-                    // Si el contenido del código QR es una URL, redirige a esa URL
-                    if (resultado.text.startsWith('http')) {
-                        window.location.href = resultado.text;
-                    } else {
-                        // Si el contenido no es una URL, muestra el contenido en la consola
-                        console.log('Contenido del QR:', resultado.text);
-                    }
-                }
-                if (error && !(error instanceof ZXing.NotFoundException)) {
-                    console.error(error);
-                }
-            });
+        .then(devices => {
+            dispositivosEntradaVideo = devices;
+            if (dispositivosEntradaVideo.length === 0) {
+                console.error('No hay dispositivos de video disponibles.');
+                return;
+            }
+
+            // Iniciar escaneo con la cámara seleccionada por defecto (la primera)
+            iniciarEscaneo(dispositivosEntradaVideo[0].deviceId);
+
+            // Agregar evento de clic para el botón de cambiar cámara
+            toggleCameraButton.addEventListener('click', cambiarCamara);
         })
-        .catch(error => console.error(error));
+        .catch(error => console.error('Error al obtener dispositivos de video:', error));
 });
