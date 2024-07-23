@@ -1,19 +1,17 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escanear Código QR y Código de Barras</title>
-    <link rel="stylesheet" href="estilos.css">
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-    <script>eruda.init();</script>
+    <title>QR/Barcode Scanner</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Escanear Código QR y Código de Barras</h1>
-    <button id="toggle-camera">Cambiar Cámara</button>
-    <video id="vista-previa" autoplay playsinline></video>
-    <div id="resultado"></div> <!-- Elemento para mostrar el contenido del código -->
+    <h1>QR/Barcode Scanner</h1>
+    <div id="reader" style="width: 500px;"></div>
+    <p id="result"></p>
+    <button id="switch-camera">Switch Camera</button>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
