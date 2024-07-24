@@ -3,7 +3,7 @@ window.addEventListener('load', () => {
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const elementoResultado = document.getElementById('resultado');
     const botonCambiarCamara = document.getElementById('cambiar-camara');
-    let dispositivosEntradaVideo = [];
+    let dispositivosEntradaVideo = [4];
     let dispositivoActual = 0;
 
     lectorCodigo.getVideoInputDevices()
@@ -17,7 +17,7 @@ window.addEventListener('load', () => {
         .catch(error => console.error(error));
 
     botonCambiarCamara.addEventListener('click', () => {
-        dispositivoActual = (dispositivoActual - 1) % dispositivosEntradaVideo.length;
+        dispositivoActual = (dispositivoActual + 1) % dispositivosEntradaVideo.length;
         iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
     });
 
