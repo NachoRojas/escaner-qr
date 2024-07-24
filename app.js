@@ -3,45 +3,59 @@ window.addEventListener('load', () => {
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const elementoResultado = document.getElementById('resultado');
     const botonCambiarCamara = document.getElementById('cambiar-camara');
-    let dispositivosEntradaVideo = [4];
+    let dispositivosEntradaVideo = [];
     let dispositivoActual = 0;
 
-    lectorCodigo.getVideoInputDevices()
+    // Obtener todos los dispositivos de entrada de video disponibles
+    navigator.mediaDevices.enumerateDevices()
         .then(dispositivos => {
-            dispositivosEntradaVideo = dispositivos;
-            // Buscar la cámara trasera
-            let dispositivoTrasero = dispositivosEntradaVideo.find(dispositivo => dispositivo.label.toLowerCase().includes('back')) || dispositivosEntradaVideo[0];
-            dispositivoActual = dispositivosEntradaVideo.indexOf(dispositivoTrasero);
-            iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
+            dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
+            if (dispositivosEntradaVideo.length > 0) {
+                // Iniciar con la primera cámara disponible
+                iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
+            }
         })
-        .catch(error => console.error(error));
+        .catch(error => console.error('Error al enumerar dispositivos: ', error));
 
-     function cambiarCamara() {
-        dispositivoActual = (dispositivoActual + 1) % dispositivosEntradaVideo.length;
-        if (streamActual) {
-            const tracks = streamActual.getTracks();
-            tracks.forEach(track => track.stop());
+    // Cambiar la cámara al hacer clic en el botón
+    botonCambiarCamara.addEventListener('click', () => {
+        cambiarCamara();
+    });
+
+    function cambiarCamara() {
+        if (dispositivosEntradaVideo.length > 1) {
+            dispositivoActual = (dispositivoActual + 1) % dispositivosEntradaVideo.length;
+            iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
         }
-        iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
     }
+
     function iniciarDecodificacion(deviceId) {
         // Detener la decodificación actual si hay alguna
         lectorCodigo.reset();
+        if (elementoVistaPrevia.srcObject) {
+            elementoVistaPrevia.srcObject.getTracks().forEach(track => track.stop());
+        }
 
-        lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
-            if (resultado) {
-                if (resultado.text.startsWith('http')) {
-                    window.location.href = resultado.text;
-                } else if (/^\d+$/.test(resultado.text)) {
-                    elementoResultado.textContent = `Código de barras: ${resultado.text}`;
-                } else {
-                    elementoResultado.textContent = `Contenido: ${resultado.text}`;
-                }
-                elementoResultado.style.display = 'block'; // Mostrar el resultado
-            }
-            if (error && !(error instanceof ZXing.NotFoundException)) {
-                console.error(error);
-            }
-        });
+        navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: deviceId } } })
+            .then(stream => {
+                elementoVistaPrevia.srcObject = stream;
+                lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
+                    if (resultado) {
+                        if (resultado.text.startsWith('http')) {
+                            window.location.href = resultado.text;
+                        } else if (/^\d+$/.test(resultado.text)) {
+                            elementoResultado.textContent = `Código de barras: ${resultado.text}`;
+                        } else {
+                            elementoResultado.textContent = `Contenido: ${resultado.text}`;
+                        }
+                        elementoResultado.style.display = 'block'; // Mostrar el resultado
+                    }
+                    if (error && !(error instanceof ZXing.NotFoundException)) {
+                        console.error(error);
+                    }
+                });
+            })
+            .catch(error => console.error('Error al obtener la transmisión de video: ', error));
     }
 });
+
