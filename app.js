@@ -7,17 +7,33 @@ window.addEventListener('load', () => {
     let dispositivosEntradaVideo = [];
     let dispositivoActual = 0;
 
+    // Verificar soporte de enumerateDevices
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
+        console.error("La enumeración de dispositivos no es compatible.");
+        return;
+    }
+
+    function actualizarListaDispositivos() {
+        navigator.mediaDevices.enumerateDevices()
+            .then(dispositivos => {
+                dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
+                elementoCantidadCamaras.textContent = `Cámaras disponibles: ${dispositivosEntradaVideo.length}`;
+                if (dispositivosEntradaVideo.length > 0) {
+                    iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
+                }
+            })
+            .catch(error => console.error('Error al enumerar dispositivos: ', error));
+    }
+
+    navigator.mediaDevices.addEventListener('devicechange', actualizarListaDispositivos);
+
     // Obtener todos los dispositivos de entrada de video disponibles
-    navigator.mediaDevices.enumerateDevices()
-        .then(dispositivos => {
-            dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
-            elementoCantidadCamaras.textContent = `Cámaras disponibles: ${dispositivosEntradaVideo.length}`;
-            if (dispositivosEntradaVideo.length > 0) {
-                // Iniciar con la primera cámara disponible
-                iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
-            }
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => {
+            stream.getTracks().forEach(track => track.stop()); // Detener la transmisión inicial
+            actualizarListaDispositivos();
         })
-        .catch(error => console.error('Error al enumerar dispositivos: ', error));
+        .catch(error => console.error('Error al obtener acceso a la cámara: ', error));
 
     // Cambiar la cámara al hacer clic en el botón
     botonCambiarCamara.addEventListener('click', () => {
