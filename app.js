@@ -17,7 +17,7 @@ window.addEventListener('load', () => {
         .catch(error => console.error(error));
 
     botonCambiarCamara.addEventListener('click', () => {
-        dispositivoActual = (dispositivoActual + 1) % dispositivosEntradaVideo.length;
+        dispositivoActual = (dispositivoActual - 1) % dispositivosEntradaVideo.length;
         iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
     });
 
