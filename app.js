@@ -1,26 +1,37 @@
 window.addEventListener('load', () => {
-    const lectorCodigo = new ZXing.BrowserMultiFormatReader(); // Utilizamos BrowserMultiFormatReader para soportar múltiples formatos
+    const lectorCodigo = new ZXing.BrowserMultiFormatReader();
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const elementoResultado = document.getElementById('resultado');
+    const botonCambiarCamara = document.getElementById('cambiar-camara');
+    let dispositivosEntradaVideo = [];
+    let dispositivoActual = 0;
 
     lectorCodigo.getVideoInputDevices()
-        .then(dispositivosEntradaVideo => {
-            let dispositivoFrontal = dispositivosEntradaVideo.find(dispositivo => dispositivo.label.toLowerCase().includes('front')) || dispositivosEntradaVideo[0];
-
-            lectorCodigo.decodeFromVideoDevice(dispositivoFrontal.deviceId, 'vista-previa', (resultado, error) => {
-                if (resultado) {
-                    if (resultado.text.startsWith('http')) {
-                        window.location.href = resultado.text;
-                    } else if (/^\d+$/.test(resultado.text)) { // Verificar si el contenido es numérico
-                        elementoResultado.textContent = `Código de barras: ${resultado.text}`;
-                    } else {
-                        elementoResultado.textContent = `Contenido: ${resultado.text}`;
-                    }
-                }
-                if (error && !(error instanceof ZXing.NotFoundException)) {
-                    console.error(error);
-                }
-            });
+        .then(dispositivos => {
+            dispositivosEntradaVideo = dispositivos;
+            iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
         })
         .catch(error => console.error(error));
+
+    botonCambiarCamara.addEventListener('click', () => {
+        dispositivoActual = (dispositivoActual + 1) % dispositivosEntradaVideo.length;
+        iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
+    });
+
+    function iniciarDecodificacion(deviceId) {
+        lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
+            if (resultado) {
+                if (resultado.text.startsWith('http')) {
+                    window.location.href = resultado.text;
+                } else if (/^\d+$/.test(resultado.text)) {
+                    elementoResultado.textContent = `Código de barras: ${resultado.text}`;
+                } else {
+                    elementoResultado.textContent = `Contenido: ${resultado.text}`;
+                }
+            }
+            if (error && !(error instanceof ZXing.NotFoundException)) {
+                console.error(error);
+            }
+        });
+    }
 });
