@@ -30,17 +30,6 @@ video {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-#linea-roja {
-    position: absolute;
-    top: 50%;
-    left: 5%;
-    width: 90%;
-    height: 2px;
-    background-color: red;
-    transform: translateY(-50%);
-    z-index: 1;
-}
-
 #cambiar-camara {
     position: absolute;
     bottom: 10px;
@@ -56,10 +45,23 @@ video {
 }
 
 #resultado {
-    margin-top: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    color: black;
+    padding: 10px;
     font-size: 1.5em;
-    color: #333;
     text-align: center;
+    display: none; /* Inicialmente oculto */
+    z-index: 2;
+}
+
+#cantidad-camaras {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #333;
 }
 
 @media (max-width: 600px) {
@@ -83,4 +85,3 @@ video {
         font-size: 0.9em;
     }
 }
-
