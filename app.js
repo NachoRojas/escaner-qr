@@ -34,6 +34,7 @@ window.addEventListener('load', () => {
                 } else {
                     elementoResultado.textContent = `Contenido: ${resultado.text}`;
                 }
+                elementoResultado.style.display = 'block'; // Mostrar el resultado
             }
             if (error && !(error instanceof ZXing.NotFoundException)) {
                 console.error(error);
