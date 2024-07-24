@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
     <title>Escanear Código QR y Código de Barras</title>
     <link rel="stylesheet" href="estilos.css">
     <script src="https://unpkg.com/@zxing/library@latest"></script>
@@ -10,10 +9,11 @@
 <body>
     <h1>Escanear Código QR y Código de Barras</h1>
     <div class="contenedor-video">
-        <video id="vista-previa"></video>
+        <video id="vista-previa" autoplay></video>
+        <div id="resultado"></div>
         <button id="cambiar-camara">Cambiar Cámara</button>
     </div>
-    <div id="resultado"></div>
+    <div id="cantidad-camaras">Cámaras disponibles: 0</div>
     <script src="app.js"></script>
 </body>
 </html>
