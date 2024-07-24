@@ -3,6 +3,7 @@ window.addEventListener('load', () => {
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const elementoResultado = document.getElementById('resultado');
     const botonCambiarCamara = document.getElementById('cambiar-camara');
+    const elementoCantidadCamaras = document.getElementById('cantidad-camaras');
     let dispositivosEntradaVideo = [];
     let dispositivoActual = 0;
 
@@ -10,6 +11,7 @@ window.addEventListener('load', () => {
     navigator.mediaDevices.enumerateDevices()
         .then(dispositivos => {
             dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
+            elementoCantidadCamaras.textContent = `Cámaras disponibles: ${dispositivosEntradaVideo.length}`;
             if (dispositivosEntradaVideo.length > 0) {
                 // Iniciar con la primera cámara disponible
                 iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
@@ -58,4 +60,3 @@ window.addEventListener('load', () => {
             .catch(error => console.error('Error al obtener la transmisión de video: ', error));
     }
 });
-
