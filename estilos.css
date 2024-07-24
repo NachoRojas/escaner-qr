@@ -30,17 +30,6 @@ video {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.linea-roja {
-    position: absolute;
-    top: 50%;
-    left: 5%;
-    width: 90%;
-    height: 2px;
-    background-color: red;
-    transform: translateY(-50%);
-    z-index: 1;
-}
-
 #cambiar-camara {
     position: absolute;
     bottom: 10px;
