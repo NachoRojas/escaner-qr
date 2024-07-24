@@ -22,6 +22,9 @@ window.addEventListener('load', () => {
     });
 
     function iniciarDecodificacion(deviceId) {
+        // Detener la decodificación actual si hay alguna
+        lectorCodigo.reset();
+
         lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
             if (resultado) {
                 if (resultado.text.startsWith('http')) {
@@ -38,3 +41,4 @@ window.addEventListener('load', () => {
         });
     }
 });
+
