@@ -16,11 +16,14 @@ window.addEventListener('load', () => {
         })
         .catch(error => console.error(error));
 
-    botonCambiarCamara.addEventListener('click', () => {
+     function cambiarCamara() {
         dispositivoActual = (dispositivoActual + 1) % dispositivosEntradaVideo.length;
+        if (streamActual) {
+            const tracks = streamActual.getTracks();
+            tracks.forEach(track => track.stop());
+        }
         iniciarDecodificacion(dispositivosEntradaVideo[dispositivoActual].deviceId);
-    });
-
+    }
     function iniciarDecodificacion(deviceId) {
         // Detener la decodificación actual si hay alguna
         lectorCodigo.reset();
