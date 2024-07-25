@@ -3,24 +3,10 @@ window.addEventListener('load', async () => {
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const elementoResultado = document.getElementById('resultado');
     const selectDispositivos = document.getElementById('dispositivos-entrada-video');
-    const debugOutput = document.getElementById('debug');
-    const codigosEscaneados = []; // Array para almacenar los códigos escaneados
-
-    function mostrarMensajeDebug(mensaje) {
-        const p = document.createElement('p');
-        p.textContent = mensaje;
-        debugOutput.appendChild(p);
-    }
-
-    function agregarCodigoEscaneado(codigo) {
-        codigosEscaneados.push(codigo);
-        elementoResultado.textContent = `Último código escaneado: ${codigo}`;
-        mostrarMensajeDebug(`Códigos escaneados: ${codigosEscaneados.join(', ')}`);
-    }
 
     try {
         const dispositivos = await navigator.mediaDevices.enumerateDevices();
-        mostrarMensajeDebug('Dispositivos enumerados: ' + JSON.stringify(dispositivos));
+        console.log('Dispositivos enumerados:', dispositivos); // Log de dispositivos enumerados
 
         const dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
 
@@ -46,7 +32,6 @@ window.addEventListener('load', async () => {
     } catch (error) {
         console.error('Error al enumerar dispositivos:', error);
         elementoResultado.textContent = 'Error al enumerar dispositivos.';
-        mostrarMensajeDebug('Error al enumerar dispositivos: ' + error.message);
     }
 
     async function iniciarEscaneo(deviceId) {
@@ -54,7 +39,6 @@ window.addEventListener('load', async () => {
         try {
             await lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
                 if (resultado) {
-                    agregarCodigoEscaneado(resultado.text);
                     if (resultado.text.startsWith('http')) {
                         window.location.href = resultado.text;
                     } else if (/^\d+$/.test(resultado.text)) {
@@ -65,13 +49,12 @@ window.addEventListener('load', async () => {
                 }
                 if (error && !(error instanceof ZXing.NotFoundException)) {
                     console.error('Error de decodificación:', error);
-                    mostrarMensajeDebug('Error de decodificación: ' + error.message);
                 }
             });
         } catch (error) {
             console.error('Error al iniciar escaneo:', error);
             elementoResultado.textContent = 'Error al iniciar escaneo.';
-            mostrarMensajeDebug('Error al iniciar escaneo: ' + error.message);
         }
     }
 });
+
