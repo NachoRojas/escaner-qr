@@ -6,13 +6,8 @@ window.addEventListener('load', async () => {
 
     try {
         const dispositivos = await navigator.mediaDevices.enumerateDevices();
-        console.log('Dispositivos enumerados:', dispositivos); // Log de dispositivos enumerados
-
         const dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
 
-        if (dispositivosEntradaVideo.length === 0) {
-            throw new Error('No se encontraron dispositivos de entrada de video.');
-        }
 
         dispositivosEntradaVideo.forEach((dispositivo, indice) => {
             const option = document.createElement('option');
