@@ -8,13 +8,24 @@
     <script src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 <body>
-    <h1>Escanear Código QR y Código de Barras</h1>
-    <select id="dispositivos-entrada-video"></select>
-    <video id="vista-previa" autoplay muted></video>
-    <div id="resultado"></div>
-    <div id="codigos-escaneados">
-        <h2>Códigos Escaneados:</h2>
-        <ul id="lista-codigos"></ul>
+    <div class="container">
+        <header>
+            <h2>Escanear Código QR y Código de Barras</h2>
+        </header>
+        <main>
+            <div class="camera-container">
+                <select id="dispositivos-entrada-video" class="select-camera"></select>
+                <video id="vista-previa" autoplay muted></video>
+                <div id="resultado"></div>
+            </div>
+            <div id="codigos-escaneados">
+                <h2>Códigos Escaneados:</h2>
+                <ul id="lista-codigos"></ul>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; Aplicacion de escaneo</p>
+        </footer>
     </div>
     <script src="app.js"></script>
 </body>
