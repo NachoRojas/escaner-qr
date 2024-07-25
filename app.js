@@ -3,11 +3,19 @@ window.addEventListener('load', async () => {
     const elementoVistaPrevia = document.getElementById('vista-previa');
     const elementoResultado = document.getElementById('resultado');
     const selectDispositivos = document.getElementById('dispositivos-entrada-video');
+    const listaCodigos = document.getElementById('lista-codigos');
+    const codigosEscaneados = []; // Array para almacenar los códigos escaneados
+
+    function agregarCodigoEscaneado(codigo) {
+        codigosEscaneados.push(codigo);
+        const li = document.createElement('li');
+        li.textContent = codigo;
+        listaCodigos.appendChild(li);
+        elementoResultado.textContent = `Último código escaneado: ${codigo}`;
+    }
 
     try {
         const dispositivos = await navigator.mediaDevices.enumerateDevices();
-        console.log('Dispositivos enumerados:', dispositivos); // Log de dispositivos enumerados
-
         const dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
 
         if (dispositivosEntradaVideo.length === 0) {
@@ -39,6 +47,7 @@ window.addEventListener('load', async () => {
         try {
             await lectorCodigo.decodeFromVideoDevice(deviceId, 'vista-previa', (resultado, error) => {
                 if (resultado) {
+                    agregarCodigoEscaneado(resultado.text);
                     if (resultado.text.startsWith('http')) {
                         window.location.href = resultado.text;
                     } else if (/^\d+$/.test(resultado.text)) {
@@ -57,4 +66,3 @@ window.addEventListener('load', async () => {
         }
     }
 });
-
