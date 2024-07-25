@@ -32,13 +32,6 @@ video {
     text-align: center;
 }
 
-#debug {
-    margin-top: 20px;
-    font-size: 1em;
-    color: red;
-    text-align: center;
-}
-
 @media (max-width: 600px) {
     body {
         padding: 10px;
@@ -61,6 +54,5 @@ select {
     border-radius: 4px;
     border: 1px solid #ccc;
 }
-
 
 
