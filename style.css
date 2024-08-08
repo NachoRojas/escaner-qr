@@ -57,7 +57,7 @@ main {
 }
 
 video {
-    width: 60%;
+    width: 65%;
     max-width: 600px;
     height: auto;
     max-height: 240px; /* Altura máxima para el video */
