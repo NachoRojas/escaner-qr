@@ -7,18 +7,15 @@ window.addEventListener('load', async () => {
     const codigosEscaneados = []; // Array para almacenar los códigos escaneados
     const delayMs = 1300; // 1.3 segundos de delay
     let escaneoActivo = true; // Bandera para controlar el estado del escaneo
+    let ultimoCodigoEscaneado = ''; // Variable para almacenar el último código escaneado
 
     function agregarCodigoEscaneado(codigo) {
+        ultimoCodigoEscaneado = codigo;
         codigosEscaneados.push(codigo);
         const li = document.createElement('li');
         li.textContent = codigo;
         listaCodigos.appendChild(li);
         elementoResultado.textContent = `Último código escaneado: ${codigo}`;
-
-        // Redirigir si el código contiene una URL
-        if (codigo.startsWith('http://') || codigo.startsWith('https://')) {
-            window.location.href = codigo;
-        }
     }
 
     async function iniciarEscaneo(deviceId) {
@@ -54,7 +51,8 @@ window.addEventListener('load', async () => {
             selectDispositivos.appendChild(option);
         });
 
-         const camaraFrontal = dispositivosEntradaVideo.find(dispositivo => dispositivo.label.toLowerCase().includes('front'));
+        // Intentar seleccionar automáticamente la cámara frontal en iOS
+        const camaraFrontal = dispositivosEntradaVideo.find(dispositivo => dispositivo.label.toLowerCase().includes('front'));
         if (camaraFrontal) {
             iniciarEscaneo(camaraFrontal.deviceId);
             selectDispositivos.value = camaraFrontal.deviceId;
@@ -66,7 +64,6 @@ window.addEventListener('load', async () => {
             }
         }
 
-
         selectDispositivos.addEventListener('change', (event) => {
             const deviceId = event.target.value;
             iniciarEscaneo(deviceId);
@@ -76,4 +73,27 @@ window.addEventListener('load', async () => {
         console.error('Error al enumerar dispositivos:', error);
         elementoResultado.textContent = 'Error al enumerar dispositivos.';
     }
+
+    // Manejo del envío del formulario
+    const formDatos = document.getElementById('form-datos');
+    formDatos.addEventListener('submit', (event) => {
+        event.preventDefault(); // Prevenir el envío del formulario
+
+        const fecha = document.getElementById('fecha').value;
+        const hora = document.getElementById('hora').value;
+        const unidad = document.getElementById('unidad').value;
+
+        const datosCompletos = {
+            codigo: ultimoCodigoEscaneado,
+            fecha,
+            hora,
+            unidad
+        };
+
+        console.log('Datos guardados:', datosCompletos);
+
+        // Mostrar los datos en el elemento datos-resultado
+        const datosResultado = document.getElementById('datos-resultado');
+        datosResultado.textContent = `Código: ${datosCompletos.codigo}, Fecha: ${datosCompletos.fecha}, Hora: ${datosCompletos.hora}, Unidad: ${datosCompletos.unidad}`;
+    });
 });
