@@ -4,8 +4,6 @@ window.addEventListener('load', async () => {
     const elementoResultado = document.getElementById('resultado');
     const selectDispositivos = document.getElementById('dispositivos-entrada-video');
     const listaCodigos = document.getElementById('lista-codigos');
-    const formDatos = document.getElementById('form-datos');
-    const datosResultado = document.getElementById('datos-resultado');
     const codigosEscaneados = []; // Array para almacenar los códigos escaneados
     const delayMs = 1300; // 1.3 segundos de delay
     let escaneoActivo = true; // Bandera para controlar el estado del escaneo
@@ -15,7 +13,7 @@ window.addEventListener('load', async () => {
         const li = document.createElement('li');
         li.textContent = codigo;
         listaCodigos.appendChild(li);
-        elementoResultado.textContent = `Último código escaneado: ${codigo}`;
+        elementoResultado.textContent = Último código escaneado: ${codigo};
     }
 
     async function iniciarEscaneo(deviceId) {
@@ -41,4 +39,36 @@ window.addEventListener('load', async () => {
         const dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
 
         if (dispositivosEntradaVideo.length === 0) {
-            throw new Error('No se encontraron dispositivos de entrada de video
+            throw new Error('No se encontraron dispositivos de entrada de video.');
+        }
+
+        dispositivosEntradaVideo.forEach((dispositivo, indice) => {
+            const option = document.createElement('option');
+            option.value = dispositivo.deviceId;
+            option.text = dispositivo.label || Cámara ${indice + 1};
+            selectDispositivos.appendChild(option);
+        });
+
+        // Intentar seleccionar automáticamente la cámara frontal en iOS
+        const camaraFrontal = dispositivosEntradaVideo.find(dispositivo => dispositivo.label.toLowerCase().includes('front'));
+        if (camaraFrontal) {
+            iniciarEscaneo(camaraFrontal.deviceId);
+            selectDispositivos.value = camaraFrontal.deviceId;
+        } else {
+            // Iniciar escaneo con el primer dispositivo disponible por defecto
+            if (dispositivosEntradaVideo.length > 0) {
+                iniciarEscaneo(dispositivosEntradaVideo[0].deviceId);
+                selectDispositivos.value = dispositivosEntradaVideo[0].deviceId;
+            }
+        }
+
+        selectDispositivos.addEventListener('change', (event) => {
+            const deviceId = event.target.value;
+            iniciarEscaneo(deviceId);
+        });
+
+    } catch (error) {
+        console.error('Error al enumerar dispositivos:', error);
+        elementoResultado.textContent = 'Error al enumerar dispositivos.';
+    }
+});  
