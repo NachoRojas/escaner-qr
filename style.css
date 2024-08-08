@@ -21,7 +21,10 @@ body {
     flex-direction: column;
     height: 100%; /* Ajuste para ocupar toda la altura */
 }
+.inputs_datos{
 
+}
+    
 header {
     background-color: #f28c1e; /* Color actualizado */
     color: #fff;
