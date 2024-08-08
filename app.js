@@ -13,7 +13,12 @@ window.addEventListener('load', async () => {
         const li = document.createElement('li');
         li.textContent = codigo;
         listaCodigos.appendChild(li);
-        elementoResultado.textContent = Último código escaneado: ${codigo};
+        elementoResultado.textContent = `Último código escaneado: ${codigo}`;
+
+        // Redirigir si el código contiene una URL
+        if (codigo.startsWith('http://') || codigo.startsWith('https://')) {
+            window.location.href = codigo;
+        }
     }
 
     async function iniciarEscaneo(deviceId) {
@@ -45,7 +50,7 @@ window.addEventListener('load', async () => {
         dispositivosEntradaVideo.forEach((dispositivo, indice) => {
             const option = document.createElement('option');
             option.value = dispositivo.deviceId;
-            option.text = dispositivo.label || Cámara ${indice + 1};
+            option.text = dispositivo.label || `Cámara ${indice + 1}`;
             selectDispositivos.appendChild(option);
         });
 
@@ -71,4 +76,4 @@ window.addEventListener('load', async () => {
         console.error('Error al enumerar dispositivos:', error);
         elementoResultado.textContent = 'Error al enumerar dispositivos.';
     }
-});  
+});
