@@ -24,7 +24,10 @@ body {
 #inputs_datos{
       margin-block: 10px;
 }
-    
+
+#datos-adicionales{
+    text-align: center;
+    }
 header {
     background-color: #f28c1e; /* Color actualizado */
     color: #fff;
