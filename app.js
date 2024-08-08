@@ -45,4 +45,58 @@ window.addEventListener('load', async () => {
         if (!regex.test(fecha)) {
             return false;
         }
-        const [
+        const [dia, mes, año] = fecha.split('-').map(num => parseInt(num, 10));
+        const date = new Date(año, mes - 1, dia);
+        return date.getFullYear() === año && date.getMonth() === mes - 1 && date.getDate() === dia;
+    }
+
+    formDatos.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const fecha = document.getElementById('fecha').value;
+        const hora = document.getElementById('hora').value;
+        const unidad = document.getElementById('unidad').value;
+
+        if (!esFechaValida(fecha)) {
+            datosResultado.textContent = 'Fecha inválida. Por favor, use el formato DD-MM-YYYY.';
+            return;
+        }
+
+        // Guardar los datos ingresados en variables
+        fechaIngresada = fecha;
+        horaIngresada = hora;
+        unidadIngresada = unidad;
+
+        datosResultado.textContent = `Datos ingresados - Fecha: ${fechaIngresada}, Hora: ${horaIngresada}, Unidad: ${unidadIngresada}`;
+    });
+
+    try {
+        const dispositivos = await navigator.mediaDevices.enumerateDevices();
+        const dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
+
+        if (dispositivosEntradaVideo.length === 0) {
+            throw new Error('No se encontraron dispositivos de entrada de video.');
+        }
+
+        dispositivosEntradaVideo.forEach((dispositivo, indice) => {
+            const option = document.createElement('option');
+            option.value = dispositivo.deviceId;
+            option.text = dispositivo.label || `Cámara ${indice + 1}`;
+            selectDispositivos.appendChild(option);
+        });
+
+        // Iniciar escaneo con el primer dispositivo disponible por defecto
+        if (dispositivosEntradaVideo.length > 0) {
+            iniciarEscaneo(dispositivosEntradaVideo[0].deviceId);
+            selectDispositivos.value = dispositivosEntradaVideo[0].deviceId;
+        }
+
+        selectDispositivos.addEventListener('change', (event) => {
+            const deviceId = event.target.value;
+            iniciarEscaneo(deviceId);
+        });
+
+    } catch (error) {
+        console.error('Error al enumerar dispositivos:', error);
+        elementoResultado.textContent = 'Error al enumerar dispositivos.';
+    }
+});
