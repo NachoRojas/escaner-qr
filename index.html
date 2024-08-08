@@ -13,18 +13,6 @@
             <h2>Escanear Código QR y Código de Barras</h2>
         </header>
         <main>
-            <div id="datos-adicionales">
-                <form id="form-datos">
-                    <label for="fecha">Fecha (DD-MM-YYYY):</label>
-                    <input type="text" id="fecha" placeholder="15-08-2024" required>
-                    <label for="hora">Hora:</label>
-                    <input type="time" id="hora" required>
-                    <label for="unidad">Unidad:</label>
-                    <input type="number" id="unidad" required>
-                    <button type="submit">Enviar Datos</button>
-                </form>
-                <div id="datos-resultado"></div>
-            </div>
             <div class="camera-container">
                 <select id="dispositivos-entrada-video" class="select-camera"></select>
                 <video id="vista-previa" autoplay muted></video>
@@ -33,6 +21,19 @@
             <div id="codigos-escaneados">
                 <h2>Códigos Escaneados:</h2>
                 <ul id="lista-codigos"></ul>
+            </div>
+            <div id="datos-adicionales">
+                <h2>Datos Adicionales:</h2>
+                <form id="form-datos">
+                    <label for="fecha">Fecha:</label>
+                    <input type="text" id="fecha" placeholder="YYYY-MM-DD" required>
+                    <label for="hora">Hora:</label>
+                    <input type="time" id="hora" required>
+                    <label for="unidad">Unidad:</label>
+                    <input type="number" id="unidad" required>
+                    <button type="submit">Enviar Datos</button>
+                </form>
+                <div id="datos-resultado"></div>
             </div>
         </main>
         <footer>
