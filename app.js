@@ -10,6 +10,10 @@ window.addEventListener('load', async () => {
     const delayMs = 1300; // 1.3 segundos de delay
     let escaneoActivo = true; // Bandera para controlar el estado del escaneo
 
+    let fechaIngresada;
+    let horaIngresada;
+    let unidadIngresada;
+
     function agregarCodigoEscaneado(codigo) {
         codigosEscaneados.push(codigo);
         const li = document.createElement('li');
@@ -36,10 +40,9 @@ window.addEventListener('load', async () => {
         });
     }
 
-    try {
-        const dispositivos = await navigator.mediaDevices.enumerateDevices();
-        const dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
-
-        if (dispositivosEntradaVideo.length === 0) {
-            throw new Error('No se
-
+    function esFechaValida(fecha) {
+        const regex = /^\d{2}-\d{2}-\d{4}$/;
+        if (!regex.test(fecha)) {
+            return false;
+        }
+        const [
