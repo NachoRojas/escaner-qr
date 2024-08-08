@@ -54,18 +54,6 @@ window.addEventListener('load', async () => {
             selectDispositivos.appendChild(option);
         });
 
-        // Intentar seleccionar automáticamente la cámara frontal en iOS
-        const camaraFrontal = dispositivosEntradaVideo.find(dispositivo => dispositivo.label.toLowerCase().includes('front'));
-        if (camaraFrontal) {
-            iniciarEscaneo(camaraFrontal.deviceId);
-            selectDispositivos.value = camaraFrontal.deviceId;
-        } else {
-            // Iniciar escaneo con el primer dispositivo disponible por defecto
-            if (dispositivosEntradaVideo.length > 0) {
-                iniciarEscaneo(dispositivosEntradaVideo[0].deviceId);
-                selectDispositivos.value = dispositivosEntradaVideo[0].deviceId;
-            }
-        }
 
         selectDispositivos.addEventListener('change', (event) => {
             const deviceId = event.target.value;
