@@ -21,8 +21,8 @@ body {
     flex-direction: column;
     height: 100%; /* Ajuste para ocupar toda la altura */
 }
-.inputs_datos{
-
+#inputs_datos{
+      margin-block: 10px;
 }
     
 header {
