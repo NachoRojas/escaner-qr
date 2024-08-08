@@ -19,25 +19,25 @@ body {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    height: 100%; /* Ajuste para ocupar toda la altura */
+    height: 100%;
 }
 
 header {
-    background-color: #f28c1e; /* Color actualizado */
+    background-color: #f28c1e;
     color: #fff;
     text-align: center;
     padding: 20px;
 }
 
-header h1 {
+header h2 {
     margin: 0;
-    font-size: 1.5em; /* Ajuste del tamaño de la fuente */
+    font-size: 1.5em;
 }
 
 main {
     flex: 1;
     padding: 20px;
-    overflow-y: auto; /* Permitir el desplazamiento en la sección principal */
+    overflow-y: auto;
 }
 
 .camera-container {
@@ -60,8 +60,8 @@ video {
     width: 100%;
     max-width: 600px;
     height: auto;
-    max-height: 300px; /* Altura máxima para el video */
-    border: 2px solid #f28c1e; /* Color actualizado */
+    max-height: 300px;
+    border: 2px solid #f28c1e;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -84,7 +84,7 @@ video {
 
 #codigos-escaneados h2 {
     font-size: 1.5em;
-    color: #f28c1e; /* Color actualizado */
+    color: #f28c1e;
     text-align: center;
 }
 
@@ -93,8 +93,8 @@ video {
     padding: 0;
     max-width: 400px;
     margin: 0 auto;
-    max-height: 200px; /* Altura máxima para la lista */
-    overflow-y: auto; /* Permitir el desplazamiento vertical */
+    max-height: 200px;
+    overflow-y: auto;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #fff;
@@ -112,8 +112,65 @@ video {
     background-color: #d0d0d0;
 }
 
+#datos-adicionales {
+    margin-top: 20px;
+}
+
+#datos-adicionales h2 {
+    font-size: 1.5em;
+    color: #f28c1e;
+    text-align: center;
+}
+
+#form-datos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#form-datos label {
+    margin-top: 10px;
+}
+
+#form-datos input {
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 1em;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 100%;
+    max-width: 400px;
+}
+
+#form-datos button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #f28c1e;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#form-datos button:hover {
+    background-color: #e07c14;
+}
+
+#datos-resultado {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #333;
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+}
+
 footer {
-    background-color: #f28c1e; /* Color actualizado */
+    background-color: #f28c1e;
     color: #fff;
     text-align: center;
     padding: 10px;
@@ -135,5 +192,10 @@ footer {
     #lista-codigos {
         max-width: 100%;
     }
-}
 
+    #form-datos input,
+    #form-datos button,
+    #datos-resultado {
+        max-width: 100%;
+    }
+}
