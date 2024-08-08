@@ -10,10 +10,6 @@ window.addEventListener('load', async () => {
     const delayMs = 1300; // 1.3 segundos de delay
     let escaneoActivo = true; // Bandera para controlar el estado del escaneo
 
-    let fechaIngresada;
-    let horaIngresada;
-    let unidadIngresada;
-
     function agregarCodigoEscaneado(codigo) {
         codigosEscaneados.push(codigo);
         const li = document.createElement('li');
@@ -38,4 +34,11 @@ window.addEventListener('load', async () => {
                 console.error('Error de decodificación:', error);
             }
         });
-   
+    }
+
+    try {
+        const dispositivos = await navigator.mediaDevices.enumerateDevices();
+        const dispositivosEntradaVideo = dispositivos.filter(dispositivo => dispositivo.kind === 'videoinput');
+
+        if (dispositivosEntradaVideo.length === 0) {
+            throw new Error('No se encontraron dispositivos de entrada de video
