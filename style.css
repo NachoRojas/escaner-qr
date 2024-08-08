@@ -60,7 +60,7 @@ video {
     width: 60%;
     max-width: 600px;
     height: auto;
-    max-height: 300px; /* Altura máxima para el video */
+    max-height: 240px; /* Altura máxima para el video */
     border: 2px solid #f28c1e; /* Color actualizado */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
