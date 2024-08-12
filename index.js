@@ -75,6 +75,24 @@ window.addEventListener('load', async () => {
         elementoResultado.textContent = 'Error al enumerar dispositivos.';
     }
 
+    // Formatear fecha mientras el usuario escribe
+    const fechaInput = document.getElementById('fecha');
+    fechaInput.addEventListener('input', () => {
+        let input = fechaInput.value;
+
+        // Eliminar cualquier carácter que no sea un dígito
+        input = input.replace(/\D/g, '');
+
+        // Insertar guiones en las posiciones correctas
+        if (input.length > 2 && input.length <= 4) {
+            input = `${input.slice(0, 2)}-${input.slice(2)}`;
+        } else if (input.length > 4) {
+            input = `${input.slice(0, 2)}-${input.slice(2, 4)}-${input.slice(4)}`;
+        }
+
+        fechaInput.value = input;
+    });
+
     // Manejo del envío del formulario
     const formDatos = document.getElementById('form-datos');
     formDatos.addEventListener('submit', (event) => {
