@@ -93,6 +93,22 @@ window.addEventListener('load', async () => {
         fechaInput.value = input;
     });
 
+    // Formatear hora mientras el usuario escribe
+    const horaInput = document.getElementById('hora');
+    horaInput.addEventListener('input', () => {
+        let input = horaInput.value;
+
+        // Eliminar cualquier carácter que no sea un dígito
+        input = input.replace(/\D/g, '');
+
+        // Insertar dos puntos en la posición correcta
+        if (input.length > 2) {
+            input = `${input.slice(0, 2)}:${input.slice(2)}`;
+        }
+
+        horaInput.value = input;
+    });
+
     // Manejo del envío del formulario
     const formDatos = document.getElementById('form-datos');
     formDatos.addEventListener('submit', (event) => {
