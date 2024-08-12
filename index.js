@@ -5,6 +5,7 @@ window.addEventListener('load', async () => {
     const selectDispositivos = document.getElementById('dispositivos-entrada-video');
     const listaCodigos = document.getElementById('lista-codigos');
     const codigosEscaneados = []; // Array para almacenar los códigos escaneados
+    const datosGuardados = []; // Array para almacenar los objetos con datos guardados
     const delayMs = 1300; // 1.3 segundos de delay
     let escaneoActivo = true; // Bandera para controlar el estado del escaneo
     let ultimoCodigoEscaneado = ''; // Variable para almacenar el último código escaneado
@@ -79,21 +80,27 @@ window.addEventListener('load', async () => {
     formDatos.addEventListener('submit', (event) => {
         event.preventDefault(); // Prevenir el envío del formulario
 
+        // Guardar los valores en variables separadas
         const fecha = document.getElementById('fecha').value;
         const hora = document.getElementById('hora').value;
         const unidad = document.getElementById('unidad').value;
 
-        const datosCompletos = {
+        // Crear un nuevo objeto con los datos
+        const nuevoObjeto = {
             codigo: ultimoCodigoEscaneado,
-            fecha,
-            hora,
-            unidad
+            fecha: fecha,
+            hora: hora,
+            unidad: unidad
         };
 
-        console.log('Datos guardados:', datosCompletos);
+        // Guardar el objeto en el array datosGuardados
+        datosGuardados.push(nuevoObjeto);
 
-        // Mostrar los datos en el elemento datos-resultado
+        // Imprimir todos los objetos guardados en la consola
+        console.log('Datos guardados:', datosGuardados);
+
+        // Mostrar el último conjunto de datos en el elemento datos-resultado
         const datosResultado = document.getElementById('datos-resultado');
-        datosResultado.textContent = `Código: ${datosCompletos.codigo}, Fecha: ${datosCompletos.fecha}, Hora: ${datosCompletos.hora}, Unidad: ${datosCompletos.unidad}`;
+        datosResultado.textContent = `Código: ${nuevoObjeto.codigo}, Fecha: ${nuevoObjeto.fecha}, Hora: ${nuevoObjeto.hora}, Unidad: ${nuevoObjeto.unidad}`;
     });
 });
