@@ -136,5 +136,10 @@ window.addEventListener('load', async () => {
         // Mostrar el último conjunto de datos en el elemento datos-resultado
         const datosResultado = document.getElementById('datos-resultado');
         datosResultado.textContent = `Código: ${nuevoObjeto.codigo}, Fecha: ${nuevoObjeto.fecha}, Hora: ${nuevoObjeto.hora}, Unidad: ${nuevoObjeto.unidad}`;
+
+        // Limpiar los campos de entrada
+        document.getElementById('fecha').value = '';
+        document.getElementById('hora').value = '';
+        document.getElementById('unidad').value = '';
     });
 });
