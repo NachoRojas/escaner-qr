@@ -125,7 +125,7 @@ footer {
     padding: 10px;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 350px) {
     .select-camera {
         width: 100%;
     }
