@@ -64,7 +64,7 @@ main {
 
 video {
     width: 100%;
-    max-width: 300px;
+    max-width: 600px;
     height: auto;
     max-height: 100px; /* Altura máxima para el video */
     border: 2px solid #f28c1e; /* Color actualizado */
